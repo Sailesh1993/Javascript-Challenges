@@ -38,7 +38,17 @@ var addTwoPromises = async function(promise1, promise2) {
      
 };
 
-const promise1 = new Promise(resolve => setTimeout(() => resolve(2), 20))
-const promise2 = new Promise(resolve => setTimeout(() => resolve(5), 60))
-const result =  addTwoPromises(promise1,promise2)
-console.log(result)
+const promise1 = new Promise((resolve) => {
+    setTimeout(() => {
+        resolve(5)
+    }, 1000)
+})
+
+const promise2 = new Promise((resolve) => {
+    setTimeout(() => {
+        resolve(10)
+    }, 1000)
+})
+
+addTwoPromises(Promise.resolve(2), Promise.resolve(2))
+.then(console.log);
