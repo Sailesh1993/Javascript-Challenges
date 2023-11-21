@@ -28,8 +28,8 @@ At t=50, count() is called and there is one active key in the cache.
 At t=100, key=1 expires.
 At t=150, get(1) is called but -1 is returned because the cache is empty. */
 
-var TimeLimitedCache = function() {
-    
+const TimeLimitedCache = function() {
+    this .cache = new Map(); // Using Map so we dont need a size variable
 };
 
 /** 
@@ -39,7 +39,13 @@ var TimeLimitedCache = function() {
  * @return {boolean} if un-expired key already existed
  */
 TimeLimitedCache.prototype.set = function(key, value, duration) {
-    
+    let found = this.cache.has(key);
+    if(found) clearTimeout(this.cache.get(key).ref); //Cancel previous timeout
+    this.cache.set(key, {
+        value, // Equivalent to 'value: value'
+        ref: setTimeout(() => this.cache.delete(key), duration)
+    });
+    return found;
 };
 
 /** 
@@ -47,14 +53,14 @@ TimeLimitedCache.prototype.set = function(key, value, duration) {
  * @return {number} value associated with key
  */
 TimeLimitedCache.prototype.get = function(key) {
-    
+    return this.cache.has(key) ? this.cache.get(key).value : -1 ;
 };
 
 /** 
  * @return {number} count of non-expired keys
  */
 TimeLimitedCache.prototype.count = function() {
-    
+    return this.cache.size;
 };
 
 /**
